@@ -24,7 +24,7 @@ public class Main {
 
         for (int round = 1; round <= roundsToWin; round++) {
             int squarePlayed = 0;
-            boolean userTurn = (firstMove==1)? true : false; // User starts first in each round
+            boolean userTurn = (firstMove==1)? true : false; // to choose who start the game
 
             while (squarePlayed < 9) {
                 if (userTurn) {
