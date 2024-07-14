@@ -11,56 +11,65 @@ public class Main {
         System.out.println("Welcome to Tic Tac Toe");
         printBoard(gameBoard);
 
-        System.out.println("Please choose the game mode:");
+        System.out.println("Choose the game mode:");
         System.out.println("1 - One round to win");
         System.out.println("2 - Three rounds to win");
-        int choice = scanner.nextInt();
-
-        int roundsToWin = (choice == 1) ? 1 : 3;
+        int gameMode = scanner.nextInt();
+        System.out.println("Choose who start's the game:");
+        System.out.println("1 - user \n2 - computer");
+        int firstMove = scanner.nextInt();
+        int roundsToWin = (gameMode == 1) ? 1 : 3; // Number of rounds to win
         int userWins = 0;
         int computerWins = 0;
 
-        while (userWins < roundsToWin && computerWins < roundsToWin) {
+        for (int round = 1; round <= roundsToWin; round++) {
             int squarePlayed = 0;
-            while (squarePlayed < 9) {
-                int userInput = getUserInput(scanner, gameBoard, user);
-                gamePlayAndValidate(gameBoard, userInput, user);
-                printBoard(gameBoard);
-                squarePlayed++;
-                if (checkWin(gameBoard, user)) {
-                    System.out.println("Congratulations! You won this round.");
-                    userWins++;
-                    break;
-                }
+            boolean userTurn = (firstMove==1)? true : false; // User starts first in each round
 
-                int computerInput;
-                Random random = new Random();
-                do {
-                    computerInput = random.nextInt(9) + 1;
-                } while (!gamePlayAndValidate(gameBoard, computerInput, computer));
-                System.out.println("Computer chooses square number " + computerInput);
-                printBoard(gameBoard);
-                squarePlayed++;
-                if (checkWin(gameBoard, computer)) {
-                    System.out.println("Computer wins this round. Better luck next time!");
-                    computerWins++;
-                    break;
-                } else if (squarePlayed == 9) {
-                    System.out.println("The game is a tie!");
+            while (squarePlayed < 9) {
+                if (userTurn) {
+                    int userInput = getUserInput(scanner, gameBoard, user);
+                    gamePlayAndValidate(gameBoard, userInput, user);
+                    printBoard(gameBoard);
+                    squarePlayed++;
+                    if (checkWin(gameBoard, user)) {
+                        System.out.println("Congratulations! You won this round!");
+                        userWins++;
+                        break;
+                    }
+                } else {
+                    int computerInput;
+                    Random random = new Random();
+                    do {
+                        computerInput = random.nextInt(9) + 1;
+                    } while (!gamePlayAndValidate(gameBoard, computerInput, computer));
+                    System.out.println("Computer chooses square number " + computerInput);
+                    printBoard(gameBoard);
+                    squarePlayed++;
+                    if (checkWin(gameBoard, computer)) {
+                        System.out.println("Computer wins this round! Better luck next time.");
+                        computerWins++;
+                        break;
+                    }
+                }
+                // Switch turns
+                userTurn = !userTurn;
+                // Check for tie
+                if (squarePlayed == 9 && !checkWin(gameBoard, user) && !checkWin(gameBoard, computer)) {
+                    System.out.println("This round is a tie!");
                 }
             }
-
-            // Reset the game board for the next round
+            // Reset the board for the next round
             resetBoard(gameBoard);
-            System.out.println("Scores: User - " + userWins + ", Computer - " + computerWins);
         }
 
+        // Determine overall game result
         if (userWins > computerWins) {
-            System.out.println("Congratulations! You won the game!");
+            System.out.println("Congratulations! You won the game " + userWins + " to " + computerWins + "!");
         } else if (computerWins > userWins) {
-            System.out.println("Computer wins the game. Better luck next time!");
+            System.out.println("Computer wins the game " + computerWins + " to " + userWins + ". Better luck next time!");
         } else {
-            System.out.println("The game ends in a tie!");
+            System.out.println("The game ends in a tie! Scores: User " + userWins + " - " + computerWins + " Computer");
         }
 
         scanner.close();
@@ -125,9 +134,10 @@ public class Main {
     }
 
     public static void resetBoard(char[][] board) {
+        char[][] initialBoard = {{'1', '2', '3'}, {'4', '5', '6'}, {'7', '8', '9'}};
         for (int i = 0; i < board.length; i++) {
             for (int j = 0; j < board[i].length; j++) {
-                board[i][j] = (char) ('1' + i * board.length + j);
+                board[i][j] = initialBoard[i][j];
             }
         }
     }
